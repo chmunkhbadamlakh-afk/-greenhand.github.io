@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Green Hand</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#f4f7f5}
+
+/* NAV */
+.nav{
+display:flex;justify-content:space-between;
+align-items:center;background:#1b4332;
+color:white;padding:15px;
+}
+
+.nav div span{
+margin:0 10px;cursor:pointer;
+}
+
+/* HERO */
+.hero{
+text-align:center;padding:40px;
+background:#e6f4ea;
+}
+
+/* PRODUCTS */
+.products{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;padding:20px;
+}
+
+.card{
+background:white;border-radius:10px;
+overflow:hidden;text-align:center;
+transition:0.3s;
+}
+
+.card:hover{transform:scale(1.05)}
+
+.card img{width:100%;height:150px;object-fit:cover}
+
+button{
+padding:8px;margin:5px;
+background:#2d6a4f;color:white;
+border:none;border-radius:5px;
+cursor:pointer;
+}
+
+/* CART */
+.cart{
+position:fixed;right:-300px;top:0;
+width:300px;height:100%;
+background:white;padding:20px;
+transition:0.4s;
+box-shadow:-5px 0 10px rgba(0,0,0,0.2);
+}
+
+.cart.active{right:0}
+
+/* MODAL */
+.modal{
+display:none;position:fixed;
+top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,0.5);
+justify-content:center;align-items:center;
+}
+
+.modalContent{
+background:white;padding:20px;
+border-radius:10px;width:300px;
+}
+
+/* CONTACT */
+.contact{
+padding:30px;text-align:center;
+background:#e6f4ea;
+}
+
+/* FOOTER */
+.footer{
+background:#1b4332;color:white;
+text-align:center;padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="nav">
+<h2>🌿 Green Hand</h2>
+<div>
+<span onclick="showPage('home')">Home</span>
+<span onclick="showPage('shop')">Shop</span>
+<span onclick="showPage('contact')">Contact</span>
+<button onclick="toggleCart()">🛒 (<span id="count">0</span>)</button>
+</div>
+</div>
+
+<div class="hero">
+<h1>Таны ногоон дэлгүүр 🌱</h1>
+<p>Шилдэг ургамал энд байна</p>
+</div>
+
+<!-- SHOP -->
+<div id="shop" class="products"></div>
+
+<!-- CONTACT -->
+<div id="contact" class="contact" style="display:none;">
+<h2>Холбоо барих</h2>
+<p>Email: greenhand@email.com</p>
+<p>Утас: 99112233</p>
+</div>
+
+<!-- CART -->
+<div class="cart" id="cart">
+<h2>Сагс</h2>
+<div id="cartItems"></div>
+<h3 id="total"></h3>
+<button onclick="checkout()">Захиалах</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+<div class="modalContent" id="modalContent"></div>
+</div>
+
+<div class="footer">© Green Hand 2026</div>
+
+<script>
+let data=[
+{name:"Сарнай",price:15,img:"https://images.unsplash.com/photo-1501004318641-b39e6451bec6"},
+{name:"Ногоон ургамал",price:12,img:"https://images.unsplash.com/photo-1466692476868-aef1dfb1e735"},
+{name:"Үрийн багц",price:5,img:"https://images.unsplash.com/photo-1492496913980-501348b61469"}
+];
+
+let cart=[];
+
+function load(){
+let html="";
+data.forEach((p,i)=>{
+html+=`
+<div class="card">
+<img src="${p.img}">
+<h3>${p.name}</h3>
+<p>$${p.price}</p>
+<button onclick="detail(${i})">Дэлгэрэнгүй</button>
+<button onclick="add(${i})">Сагслах</button>
+</div>`;
+});
+document.getElementById("shop").innerHTML=html;
+}
+
+function add(i){
+cart.push(data[i]);
+document.getElementById("count").innerText=cart.length;
+renderCart();
+}
+
+function renderCart(){
+let html="";let total=0;
+cart.forEach((c,index)=>{
+total+=c.price;
+html+=`<p>${c.name} - $${c.price}
+<button onclick="remove(${index})">X</button></p>`;
+});
+document.getElementById("cartItems").innerHTML=html;
+document.getElementById("total").innerText="Нийт: $"+total;
+}
+
+function remove(i){
+cart.splice(i,1);
+document.getElementById("count").innerText=cart.length;
+renderCart();
+}
+
+function toggleCart(){
+document.getElementById("cart").classList.toggle("active");
+}
+
+function detail(i){
+document.getElementById("modal").style.display="flex";
+document.getElementById("modalContent").innerHTML=
+`<h2>${data[i].name}</h2>
+<p>Үнэ: $${data[i].price}</p>
+<button onclick="add(${i})">Сагслах</button>
+<button onclick="closeModal()">Хаах</button>`;
+}
+
+function closeModal(){
+document.getElementById("modal").style.display="none";
+}
+
+function checkout(){
+alert("Захиалга амжилттай!");
+cart=[];
+renderCart();
+document.getElementById("count").innerText=0;
+}
+
+function showPage(p){
+document.getElementById("shop").style.display = p==="shop"?"grid":"none";
+document.getElementById("contact").style.display = p==="contact"?"block":"none";
+}
+
+load();
+</script>
+
+</body>
+</html>
